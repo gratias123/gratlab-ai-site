@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRATLAB AI — assistant IA pour Windows</title>
+<meta name="description" content="GRATLAB AI : application Windows autonome pour dialoguer avec le fournisseur d'IA de votre choix, avec mémoire locale et diagnostic réel des fournisseurs.">
+<style>
+  :root {
+    --root: #06080e;
+    --window: #0a0d15;
+    --surface: #0f131e;
+    --raised: #141a27;
+    --line: #222b3e;
+    --line-strong: #313c56;
+    --text: #e9ecf3;
+    --text-2: #a6aec2;
+    --text-3: #7e8699;
+    --accent: #2a63f0;
+    --accent-hover: #3168f5;
+    --accent-soft: #152449;
+    --accent-text: #9fbdff;
+    --success: #2fc08d;
+    --warning: #e0a32b;
+    --danger: #f0575c;
+    --radius: 14px;
+    --max: 1020px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--root);
+    color: var(--text);
+    font: 16px/1.6 "Segoe UI", Inter, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-text); }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+  header.top {
+    border-bottom: 1px solid var(--line);
+    background: var(--window);
+  }
+  .top .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 650; letter-spacing: .2px; }
+  .logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    display: grid; place-items: center;
+    background: linear-gradient(160deg, #1d3f9e, #0e1a3c);
+    border: 1px solid var(--accent-soft);
+    color: #cfe0ff; font-weight: 800; font-size: 17px;
+  }
+  .build { color: var(--text-3); font-size: 13px; }
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--line); }
+  .hero { padding-top: 64px; }
+  h1 {
+    font-size: clamp(30px, 5vw, 46px);
+    line-height: 1.12; letter-spacing: -.5px;
+    margin: 0 0 18px; max-width: 820px;
+  }
+  .lead { color: var(--text-2); font-size: 18px; max-width: 760px; margin: 0 0 28px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--accent); color: #fff; text-decoration: none;
+    padding: 13px 20px; border-radius: 10px; font-weight: 650;
+    border: 1px solid transparent; transition: background .15s ease;
+  }
+  .btn:hover { background: var(--accent-hover); }
+  .btn span { font-weight: 500; opacity: .85; font-size: 14px; }
+  .btn.ghost {
+    background: transparent; color: var(--text);
+    border-color: var(--line-strong);
+  }
+  .btn.ghost:hover { background: var(--raised); }
+  .small { color: var(--text-3); font-size: 13.5px; margin-top: 14px; }
+
+  figure.shot { margin: 36px 0 0; }
+  figure.shot img {
+    width: 100%; height: auto; display: block;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    box-shadow: 0 24px 60px rgba(0,0,0,.45);
+  }
+  figcaption { color: var(--text-3); font-size: 13px; margin-top: 10px; }
+
+  h2 { font-size: 26px; margin: 0 0 8px; letter-spacing: -.2px; }
+  .intro { color: var(--text-2); margin: 0 0 30px; max-width: 760px; }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .card p { color: var(--text-2); font-size: 14.5px; margin: 0; }
+  .card .ico { font-size: 18px; color: var(--accent-text); margin-bottom: 10px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 13px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--text-3); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .6px; }
+  td:first-child { width: 42%; color: var(--text); }
+  .ok { color: var(--success); font-weight: 600; }
+  .warn { color: var(--warning); font-weight: 600; }
+  .no { color: var(--danger); font-weight: 600; }
+
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  ol.steps li {
+    counter-increment: s;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 18px 20px 18px 62px; position: relative;
+  }
+  ol.steps li::before {
+    content: counter(s);
+    position: absolute; left: 20px; top: 17px;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent-text);
+    font-weight: 700; font-size: 13px;
+    border: 1px solid #22386e;
+  }
+  ol.steps p { margin: 4px 0 0; color: var(--text-2); font-size: 14.5px; }
+  code {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    background: var(--raised); border: 1px solid var(--line);
+    border-radius: 6px; padding: 2px 6px; font-size: 13px;
+    word-break: break-all;
+  }
+  pre {
+    background: var(--raised); border: 1px solid var(--line);
+    border-radius: 10px; padding: 14px 16px; overflow-x: auto; margin: 10px 0 0;
+  }
+  pre code { background: none; border: 0; padding: 0; font-size: 12.5px; color: var(--text-2); }
+
+  .notice {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #1a1508; border: 1px solid #3a2c10;
+    border-radius: var(--radius); padding: 16px 18px;
+    color: #e7cf9b; font-size: 14.5px;
+  }
+  .notice strong { color: #f2d79b; }
+
+  footer { padding: 34px 0 48px; color: var(--text-3); font-size: 13.5px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 640px) {
+    section { padding: 40px 0; }
+    td:first-child { width: auto; }
+    .hero { padding-top: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="logo">A</span> GRATLAB AI</div>
+    <div class="build">version 0.1.0 · build 20/10/2026 21:51</div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>Un assistant IA sur votre PC, avec le fournisseur que vous choisissez.</h1>
+      <p class="lead">Application Windows autonome : conversation, mémoire locale, capture d'écran sur action explicite et diagnostic réel des fournisseurs. Aucune requête n'est envoyée sans votre demande.</p>
+      <div class="actions">
+        <a class="btn" href="https://github.com/gratias123/gratlab-ai-site/releases/download/v0.1.0/GRATLAB-AI-0.1.0-win64-20261020.zip" download>Télécharger pour Windows <span>33,8 Mo</span></a>
+        <a class="btn ghost" href="#verifier">Vérifier le fichier</a>
+      </div>
+      <p class="small">Windows 10/11 64 bits · archive ZIP · aucune installation · aucune clé API incluse</p>
+      <figure class="shot">
+        <img src="assets/interface-reelle.png" alt="Fenêtre de GRATLAB AI : conversation vide, panneau des tâches à droite et barre d'état">
+        <figcaption>Capture réelle de l'application, profil vide et hors ligne. Aucune donnée personnelle.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Ce que fait l'application</h2>
+      <p class="intro">Chaque fonction ci-dessous existe réellement dans cette version. Les limites sont indiquées plus bas, sans formulation publicitaire.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="ico">◧</div>
+          <h3>Conversation avec votre modèle</h3>
+          <p>Gemini, Groq, OpenRouter ou Ollama en local. Le modèle configuré est affiché ; il n'est jamais changé sans votre action.</p>
+        </div>
+        <div class="card">
+          <div class="ico">⇄</div>
+          <h3>Chaîne de repli explicite</h3>
+          <p>Si un fournisseur échoue, le suivant est essayé. L'échec est affiché tel quel, avec le détail derrière « Voir les détails ».</p>
+        </div>
+        <div class="card">
+          <div class="ico">◫</div>
+          <h3>Mémoire et historique locaux</h3>
+          <p>Conversations et journal conservés dans un dossier local (SQLite). Rien n'est synchronisé dans le cloud par l'application.</p>
+        </div>
+        <div class="card">
+          <div class="ico">⌗</div>
+          <h3>Capture d'écran sur action</h3>
+          <p>La capture n'a lieu qu'après une demande explicite et une confirmation. Aucune capture silencieuse.</p>
+        </div>
+        <div class="card">
+          <div class="ico">≡</div>
+          <h3>Diagnostic vérifiable</h3>
+          <p>Capacités détectées, clé présente ou absente, test réel des fournisseurs. Un fournisseur n'est déclaré opérationnel qu'après un test réussi.</p>
+        </div>
+        <div class="card">
+          <div class="ico">◇</div>
+          <h3>Clé hors des fichiers</h3>
+          <p>La clé API est lue dans une variable d'environnement utilisateur. Elle n'est ni dans l'archive, ni dans la configuration, ni dans les journaux.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Ce qui est vérifié, et ce qui ne l'est pas</h2>
+      <p class="intro">État réel au 20/10/2026 21:51. Les points non vérifiés sont signalés comme tels.</p>
+      <table>
+        <thead><tr><th>Point</th><th>État</th></tr></thead>
+        <tbody>
+          <tr><td>Suite de tests automatisés</td><td><span class="ok">551 tests passés</span> (1 écarté : écran de test trop petit)</td></tr>
+          <tr><td>Démarrage à chaud (splash puis fenêtre)</td><td><span class="ok">2–3 s puis 5–7 s</span> mesurés sur la machine de référence</td></tr>
+          <tr><td>Démarrage après longue inactivité</td><td><span class="warn">12–30 s</span> — disque dur 5400 tr/min, non corrigeable dans le code</td></tr>
+          <tr><td>Absence de clé dans les fichiers livrés</td><td><span class="ok">Vérifiée</span> dans l'archive et les journaux</td></tr>
+          <tr><td>Parcours complet de chaque page</td><td><span class="warn">Non vérifié</span> — pas d'accès visuel automatisé à l'interface</td></tr>
+          <tr><td>Ollama en local</td><td><span class="warn">Non testé sur cette machine</span> — service non installé</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Installation</h2>
+      <ol class="steps">
+        <li>
+          <h3>Télécharger et décompresser</h3>
+          <p>Le fichier ZIP contient le dossier <code>GRATLAB-AI</code>. Windows peut demander une confirmation : l'application n'est pas signée par un certificat commercial.</p>
+        </li>
+        <li>
+          <h3>Lancer <code>GRATLAB-AI.exe</code></h3>
+          <p>Aucune installation, aucun droit administrateur. L'écran de premier lancement propose de configurer un fournisseur ou de continuer plus tard.</p>
+        </li>
+        <li>
+          <h3>Configurer une clé, ou utiliser Ollama</h3>
+          <p>La clé se déclare dans <strong>Paramètres</strong> et reste dans votre profil Windows. Sans clé, l'application le dit clairement au lieu d'inventer une réponse.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="verifier">
+    <div class="wrap">
+      <h2>Vérifier le fichier téléchargé</h2>
+      <p class="intro">Comparez l'empreinte SHA-256 du ZIP avec celle-ci. Toute différence signifie que le fichier a été modifié.</p>
+      <pre><code>BC11F65609128B05577F1F4F2D9D723832673AAE2DC8FD3B5B38ECCFF8F7312C</code></pre>
+      <p class="small">Sous Windows : <code>Get-FileHash .\GRATLAB-AI-0.1.0-win64-20261020.zip -Algorithm SHA256</code></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Limites connues</h2>
+      <div class="grid">
+        <div class="card"><h3>Windows uniquement</h3><p>Application de bureau Windows 64 bits. Il n'existe pas de version web ni mobile.</p></div>
+        <div class="card"><h3>Pas de mise à jour automatique</h3><p>Une nouvelle version se télécharge et remplace le dossier. Aucun service en arrière-plan.</p></div>
+        <div class="card"><h3>Licence à définir</h3><p>Logiciel propriétaire. Les conditions d'utilisation ne sont pas encore publiées ; ne le redistribuez pas sans accord.</p></div>
+        <div class="card"><h3>Ollama non fourni</h3><p>Le mode local suppose qu'Ollama est déjà installé et démarré. L'application ne télécharge rien à votre place.</p></div>
+      </div>
+      <div class="notice" style="margin-top:20px">
+        <span>⚠</span>
+        <div><strong>Clé API compromise.</strong> Si une clé a été partagée dans une conversation, régénérez-la chez le fournisseur et remplacez la variable d'environnement. Une clé publiée doit être considérée comme perdue.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 GRATLAB · Logiciel propriétaire</div>
+    <div>Page statique : aucun cookie, aucun traceur, aucune ressource externe.</div>
+  </div>
+</footer>
+
+</body>
+</html>
